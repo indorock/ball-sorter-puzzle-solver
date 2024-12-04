@@ -1,0 +1,17 @@
+{
+  "name": "Ball Sorter Puzzle Solver",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "private": true,
+  "main": "go.js",
+  "engines": {
+    "npm": "^10.9.0",
+    "node": "^18.0.0"
+  },
+  "jshintConfig": {
+    "esversion": 6
+  }
+}
+
+
