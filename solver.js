@@ -2,6 +2,9 @@ import fs from 'fs';
 import path from 'path';
 import puzzle from './puzzle.js';
 
+// set to true to enable logging of every single attempted move to console and file. WARNING: this **massively** slows down execution of the script by about 100x
+const enableLogging = false;
+
 let startTime = Date.now();
 const filePath = path.join('./log.txt');
 fs.writeFileSync(filePath, "*********************************** START TME" + Date.now() + "**************************************\n\n");
@@ -9,17 +12,22 @@ fs.writeFileSync(filePath, "*********************************** START TME" + Dat
 const counts = {};
 const tubeSize = puzzle[0].length;
 
-const log = (args) => {
+const log = (args, logfileOnly = false) => {
+    if(!enableLogging){
+        return false;
+    }
+
     if (typeof args === 'string') {
         args = [args];
     }
-
-    console.log(...args);
+    if(!logfileOnly) {
+        console.log(...args);
+    }
 
     for (let i = 0; i < args.length; i++) {
         const msg = args[i];
         fs.appendFileSync(filePath, (typeof msg === 'string' ? msg : JSON.stringify(msg)));
-        fs.appendFileSync(filePath, "\n");
+        fs.appendFileSync(filePath, "\r\n");
     }
     fs.appendFileSync(filePath, "\n-------------------------------------------------------------------\n");
 };
@@ -106,16 +114,17 @@ const solve = (puzzle, moveHistory, depth) => {
         // log(["SOLVED TUBES", solvedTubes]);
 
         if (solvedTubes.length === tubes.length - emptyTubes) {
-            log("*******************************************************************************************************************");
-            log("*******************************************************************************************************************");
-            log("*******************************************************************************************************************");
-            log("****************************************** PUZZLE SOLVED  IN " + moveHistory.length + " MOVES! ********************************************");
-            log("****************************************** TIME ELAPSED: " + (Date.now() - startTime) / 1000 + " seconds *****************************************");
-            log("*******************************************************************************************************************");
-            log("*******************************************************************************************************************");
-            log("*******************************************************************************************************************");
-            log([moveHistory]);
             log([tubes]);
+            const sucessMessage = [
+                "*******************************************************************************************************************",
+                "****************************************** PUZZLE SOLVED  IN " + moveHistory.length + " MOVES! ********************************************",
+                "****************************************** TIME ELAPSED: " + (Date.now() - startTime) / 1000 + " seconds *****************************************",
+                "*******************************************************************************************************************",
+            ];
+            log([sucessMessage], true);
+            log([moveHistory], true);
+            console.log(sucessMessage);
+            console.log([moveHistory]);
             return true;
         }
 // log(["EMPTY SLOTS", emptySlots]);
@@ -157,13 +166,9 @@ const solve = (puzzle, moveHistory, depth) => {
         }
     }
     log(["AVAILABLE MOVES", availableMoves]);
-    // log(["DEPTH", depth]);
 
     if (!availableMoves.length) {
         log(['********************************************************* NO MOVES LEFT!!! **********************************************************', moveHistory]);
-        const lastMove = moveHistory[moveHistory.length - 1];
-        // log(["MOVES", moveHistory]);
-        // log(["LAST MOVE", lastMove]);
         return false;
     }
 
@@ -172,8 +177,6 @@ const solve = (puzzle, moveHistory, depth) => {
         // log(["TUBES BEFORE MOVE", tubes]);
         const tubesState = JSON.parse(JSON.stringify(tubes));
         doMove(move, tubesState, ballGroups, slots);
-        // const ballgroupsState = JSON.parse(JSON.stringify(ballGroups));
-        // const slotsState = JSON.parse(JSON.stringify(slots));
         log(["TUBES AFTER MOVE", tubesState]);
         log(["HISTORY", [...moveHistory, {from: move.from + 1, to: move.to + 1}]]);
         const ret = solve(tubesState, [...moveHistory, {from: move.from + 1, to: move.to + 1}], depth + 1);
