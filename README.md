@@ -10,7 +10,7 @@ Yes, it's JS, yes Python might run a lot faster, no I don' t care. This was just
 4. Note: the moves history is output in human-friendly 1-indexed format.
 
 ### How long does it take to solve?
-That depends on the size of the puzzle, the power of the computer running, but also of the amount of logging. The logging to console + file are the real bottlenecks, enabling it can slow down a complex puzzle solve by a factor of 100x. So if you don't care about how it solves it but just want to solution, be sure to set `enableLogging` to `false`. 
+That obviously depends on the size of the puzzle and the power of the computer running it, but also of the amount of logging. The logging to console + file are the real bottlenecks, enabling it can slow down a complex puzzle solve by a factor of 100x. So if you don't care about how it solves it but just want to solution, be sure to set `enableLogging` to `false`. 
 
 ### Todos:
 Nothing really. Maybe 1 or 2 changes to add some basic logic and intelligence when it comes to comparing available moves against each other, but nothing fancy. The script is not lightning fast (It takes over 3 seconds on an Apple Silcon M1 Max CPU to solve level 297 as defined in `puzzle.js`) but it works.
