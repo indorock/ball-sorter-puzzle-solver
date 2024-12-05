@@ -117,14 +117,15 @@ const solve = (puzzle, moveHistory, depth) => {
             log([tubes]);
             const sucessMessage = [
                 "*******************************************************************************************************************",
-                "****************************************** PUZZLE SOLVED  IN " + moveHistory.length + " MOVES! ********************************************",
+                "****************************************** PUZZLE SOLVED IN " + moveHistory.length + " MOVES! ********************************************",
                 "****************************************** TIME ELAPSED: " + (Date.now() - startTime) / 1000 + " seconds *****************************************",
                 "*******************************************************************************************************************",
             ];
             log([sucessMessage], true);
             log([moveHistory], true);
-            console.log(sucessMessage);
-            console.log([moveHistory]);
+
+            console.log(...[].concat(...sucessMessage.map(i => [i,"\n"])));
+            console.log([...moveHistory]);
             return true;
         }
 // log(["EMPTY SLOTS", emptySlots]);
