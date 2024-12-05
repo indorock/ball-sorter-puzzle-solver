@@ -1,7 +1,7 @@
 {
-  "name": "Ball Sorter Puzzle Solver",
+  "name": "ball-sorter-puzzle-solver",
   "version": "1.0.0",
-  "description": "",
+  "description": "A simple brute-force solver script for ball sort puzzle games. Prioritises simplicity over optimal solution.",
   "type": "module",
   "private": true,
   "main": "go.js",
