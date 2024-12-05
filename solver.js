@@ -4,21 +4,21 @@ import puzzle from './puzzle.js';
 
 let startTime = Date.now();
 const filePath = path.join('./log.txt');
-fs.writeFileSync(filePath, "*********************************** START TME"  + Date.now() + "**************************************\n\n");
+fs.writeFileSync(filePath, "*********************************** START TME" + Date.now() + "**************************************\n\n");
 
 const counts = {};
 const tubeSize = puzzle[0].length;
 
 const log = (args) => {
-    if(typeof args === 'string'){
+    if (typeof args === 'string') {
         args = [args];
     }
 
     console.log(...args);
 
-    for(let i=0; i<args.length; i++){
+    for (let i = 0; i < args.length; i++) {
         const msg = args[i];
-        fs.appendFileSync(filePath, (typeof msg === 'string' ? msg: JSON.stringify(msg)));
+        fs.appendFileSync(filePath, (typeof msg === 'string' ? msg : JSON.stringify(msg)));
         fs.appendFileSync(filePath, "\n");
     }
     fs.appendFileSync(filePath, "\n-------------------------------------------------------------------\n");
@@ -30,8 +30,8 @@ const checkProblem = (puzzle) => {
 
     for (let i = 0; i < puzzle.length; i++) {
         const tube = puzzle[i];
-        if(tube.length !== tubeLength){
-            log([`TUBE ${i+1} HAS WRONG NUMBER OF SLOTS`, tube]);
+        if (tube.length !== tubeLength) {
+            log([`TUBE ${i + 1} HAS WRONG NUMBER OF SLOTS`, tube]);
             return false;
         }
         for (let j = 0; j < tube.length; j++) {
@@ -46,16 +46,16 @@ const checkProblem = (puzzle) => {
     }
     for (const i in counts) {
         if (counts[i] !== tubeSize) {
-            log('wrong amount of ' + counts[i] + ' balls:' + i);
+            log('WRONG NUMBER OF ' + counts[i] + ' BALLS:' + i);
             ret = false;
-        } else {
-            // log("count OK for " + i);
         }
     }
     return ret;
 };
 
 const solve = (puzzle, moveHistory, depth) => {
+    // depth is max number of moves that we want to try, so far the most complex puzzles I've thrown at it took about 56 moves to solve and almost 10 minutes.
+    // This check might seem overkill (and getting to 100 moves would probably take hours if not days to get that far), but it's there just in case.
     if (depth > 100) {
         return;
     }
@@ -72,9 +72,6 @@ const solve = (puzzle, moveHistory, depth) => {
         slots[i] = null;
         // log(["CHECK TUBE", i, tubes[i]]);
 
-        // if(solvedTubes.includes(i)){
-        //     continue;
-        // }
         const balls = tubes[i];
 
         let topBall = null;
@@ -95,13 +92,13 @@ const solve = (puzzle, moveHistory, depth) => {
                 emptySlots++;
             }
         }
-        if(count === 0){
+        if (count === 0) {
             emptyTubes++;
+            // log(['EMPTY TUBES', emptyTubes]);
         }
         if (count === tubeSize) {
             // this tube is solved!
-            // log(["REMOVE TUBE", i, balls]);
-            // log(['EMPTY TUBES', emptyTubes]);
+            // log(["SOLVED TUBE", i, balls]);
             solvedTubes.push(i);
         } else if (count) {
             ballGroups[i] = {color: topBall, count};
@@ -109,12 +106,11 @@ const solve = (puzzle, moveHistory, depth) => {
         // log(["SOLVED TUBES", solvedTubes]);
 
         if (solvedTubes.length === tubes.length - emptyTubes) {
-            log(['EMPTY TUBES!!', emptyTubes]);
             log("*******************************************************************************************************************");
             log("*******************************************************************************************************************");
             log("*******************************************************************************************************************");
             log("****************************************** PUZZLE SOLVED  IN " + moveHistory.length + " MOVES! ********************************************");
-            log("****************************************** TIME ELAPSED: " + (Date.now() - startTime)/1000 + " seconds *****************************************");
+            log("****************************************** TIME ELAPSED: " + (Date.now() - startTime) / 1000 + " seconds *****************************************");
             log("*******************************************************************************************************************");
             log("*******************************************************************************************************************");
             log("*******************************************************************************************************************");
@@ -146,13 +142,13 @@ const solve = (puzzle, moveHistory, depth) => {
             }
             const group = ballGroups[k];
             if (group && (((!slot.color && !hasEmptyTube) || group.color === slot.color) && slot.count >= group.count && !(group.count + slots[k].count === tubeSize && slot.count === tubeSize))) {
-
                 if (moveHistory.length) {
                     const lastMove = moveHistory[moveHistory.length - 1];
                     if (lastMove.to - 1 === k && lastMove.from - 1 === j) {
                         continue;
                     }
                 }
+                // TODO: add a `weight` key to the move object, that gives priority to "better" moves, but first need to determine the logic of what makes a better move.
                 availableMoves.push({from: k, to: j});
             }
         }
