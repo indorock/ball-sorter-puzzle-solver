@@ -1,186 +1,21 @@
 import fs from 'fs';
 import path from 'path';
+import puzzle from './puzzle.js';
 
-
-const balls = {
-    pl: "PL",
-    eu: "EU",
-    bg: "BG",
-    tr: "TR",
-    cn: "CN",
-    su: "SU",
-    cg: "CG",
-    bn: "BN",
-    au: "AU",
-    de: "DE",
-    lb: "LB",
-    sl: "SL"
-};
-
-const {pl, eu, bg, tr, cn, su, cg, bn, au, de, lb, sl} = balls;
-
-// level 100
-let tubesInitial = [
-    [cg, de, cg, bg],
-    [tr, eu, cn, de],
-    [bg, pl, au, su],
-    [bn, su, de, sl],
-    [bg, sl, tr, eu],
-    [eu, pl, cn, cn],
-    [cn, cg, bn, au],
-    [bn, bn, au, sl],
-    [cg, pl, de, au],
-    [eu, tr, tr, sl],
-    [su, bg, pl, su],
-    [null, null, null, null],
-    [null, null, null, null]
-];
-
-// level 200
-tubesInitial = [
-    [sl, sl, tr, pl, de],
-    [eu, cn, pl, au, su],
-    [tr, tr, tr, cn, eu],
-    [de, au, eu, sl, su],
-    [su, pl, su, bg, bg],
-    [pl, cn, bg, sl, de],
-    [cn, bg, cn, au, eu,],
-    [su, eu, de, au, de],
-    [au, pl, tr, sl, bg],
-    [null, null, null, null, null],
-    [null, null, null, null, null]
-];
-
-// level 250
-tubesInitial = [
-    [tr, au, tr, su, cn],
-    [sl, au, pl, de, pl],
-    [sl, bg, pl, au, eu],
-    [su, de, cn, su, tr],
-    [sl, eu, eu, de, cn],
-    [bg, pl, sl, sl, cn],
-    [eu, de, su, cn, tr],
-    [su, au, au, bg, eu],
-    [bg, bg, pl, tr, de],
-    [null, null, null, null, null],
-    [null, null, null, null, null]
-];
-
-// level 280
-tubesInitial = [
-    [tr, cn, bg, su, au],
-    [cn, bg, eu, cn, sl],
-    [au, eu, sl, de, pl],
-    [cn, tr, pl, tr, pl],
-    [de, bg, de, bg, sl],
-    [eu, bg, sl, tr, pl],
-    [tr, sl, au, su, au],
-    [su, de, su, su, pl],
-    [eu, eu, au, de, cn],
-    [null, null, null, null, null],
-    [null, null, null, null, null]
-];
-
-// level 290
-tubesInitial = [
-    [pl, bg, eu, au, eu],
-    [cn, cn, bg, tr, cn],
-    [bg, sl, tr, eu, lb],
-    [lb, au, su, tr, au],
-    [de, de, su, de, cn],
-    [pl, cg, cg, sl, pl],
-    [au, cg, su, sl, bg],
-    [cn, bn, tr, bn, su],
-    [sl, cg, bn, tr, sl],
-    [su, pl, eu, pl, lb],
-    [eu, de, lb, bn, au],
-    [bg, cg, de, lb, bn],
-    [null, null, null, null, null],
-    [null, null, null, null, null]
-];
-
-// level 295
-// tubesInitial = [
-//     [cn, lb, tr, au, de],
-//     [de, au, eu, eu, pl],
-//     [bg, de, tr, pl, cn],
-//     [cg, sl, tr, su, pl],
-//     [cg, au, cg, bg, cn],
-//     [sl, cn, su, eu, su],
-//     [sl, bg, sl, bn, pl],
-//     [lb, au, au, cg, lb],
-//     [lb, bg, eu, tr, cg],
-//     [bn, su, cn, tr, de],
-//     [su, lb, eu, bn, bn],
-//     [de, bg, sl, bn, pl],
-//     [null, null, null, null, null],
-//     [null, null, null, null, null]
-// ];
-
-// level 296
-tubesInitial = [
-    [cg, eu, su, au, de],
-    [cn, tr, au, cn, sl],
-    [pl, eu, cg, sl, cn],
-    [de, au, su, cn, su],
-    [de, eu, bg, au, tr],
-    [sl, tr, bg, bg, tr],
-    [cg, cg, cg, cn, de],
-    [sl, eu, su, de, tr],
-    [pl, bg, pl, su, sl],
-    [pl, bg, eu, pl, au],
-    [null, null, null, null, null],
-    [null, null, null, null, null]
-];
-
-// level 297
-tubesInitial = [
-    [pl, pl, eu, bg, tr],
-    [cn, su, cg, tr, bn],
-    [bg, au, eu, de, bn],
-    [lb, sl, cg, bg, bg],
-    [de, sl, au, su, bn],
-    [tr, eu, sl, cn, lb],
-    [pl, bn, cg, sl, cg],
-    [su, sl, bn, cn, eu],
-    [lb, lb, au, au, su],
-    [tr, de, cg, eu, cn],
-    [de, bg, de, au, pl],
-    [su, tr, pl, lb, cn],
-    [null, null, null, null, null],
-    [null, null, null, null, null]
-];
-
-// level 298
-tubesInitial = [
-    [sl,eu,su,au,su],
-    [pl,pl,cn,pl,au],
-    [tr,tr,de,bn,eu],
-    [de,cn,eu,au,au],
-    [tr,eu,sl,cg,bn],
-    [sl,su,cg,bg,lb],
-    [cg,de,pl,cn,tr],
-    [lb,cn,bg,bn,eu],
-    [bg,cn,tr,bg,au],
-    [sl,lb,bn,cg,lb],
-    [su,su,de,bn,pl],
-    [de,bg,cg,lb,sl],
-    [null, null, null, null, null],
-    [null, null, null, null, null]
-];
-
-const counts = {};
-const tubeSize = 5;
 let startTime = Date.now();
 const filePath = path.join('./log.txt');
 fs.writeFileSync(filePath, "*********************************** START TME"  + Date.now() + "**************************************\n\n");
+
+const counts = {};
+const tubeSize = puzzle[0].length;
 
 const log = (args) => {
     if(typeof args === 'string'){
         args = [args];
     }
 
-    console.log(args);
+    console.log(...args);
+
     for(let i=0; i<args.length; i++){
         const msg = args[i];
         fs.appendFileSync(filePath, (typeof msg === 'string' ? msg: JSON.stringify(msg)));
@@ -189,11 +24,16 @@ const log = (args) => {
     fs.appendFileSync(filePath, "\n-------------------------------------------------------------------\n");
 };
 
-const checkProblem = () => {
+const checkProblem = (puzzle) => {
     let ret = true;
+    let tubeLength = puzzle[0].length;
 
-    for (let i = 0; i < tubesInitial.length; i++) {
-        const tube = tubesInitial[i];
+    for (let i = 0; i < puzzle.length; i++) {
+        const tube = puzzle[i];
+        if(tube.length !== tubeLength){
+            log([`TUBE ${i+1} HAS WRONG NUMBER OF SLOTS`, tube]);
+            return false;
+        }
         for (let j = 0; j < tube.length; j++) {
             const ball = tube[j];
             if (ball !== null) {
@@ -215,7 +55,7 @@ const checkProblem = () => {
     return ret;
 };
 
-const solve = (tubes, moveHistory, depth) => {
+const solve = (puzzle, moveHistory, depth) => {
     if (depth > 100) {
         return;
     }
@@ -223,7 +63,7 @@ const solve = (tubes, moveHistory, depth) => {
     const slots = [];
     const solvedTubes = [];
 
-    tubes = JSON.parse(JSON.stringify(tubes));
+    const tubes = JSON.parse(JSON.stringify(puzzle));
     const availableMoves = [];
     let emptyTubes = 0;
 
@@ -260,8 +100,8 @@ const solve = (tubes, moveHistory, depth) => {
         }
         if (count === tubeSize) {
             // this tube is solved!
-            log(["REMOVE TUBE", i, balls]);
-            log(['EMPTY TUBES', emptyTubes]);
+            // log(["REMOVE TUBE", i, balls]);
+            // log(['EMPTY TUBES', emptyTubes]);
             solvedTubes.push(i);
         } else if (count) {
             ballGroups[i] = {color: topBall, count};
@@ -270,16 +110,16 @@ const solve = (tubes, moveHistory, depth) => {
 
         if (solvedTubes.length === tubes.length - emptyTubes) {
             log(['EMPTY TUBES!!', emptyTubes]);
-            log("************************************************************************************************************************");
-            log("************************************************************************************************************************");
-            log("************************************************************************************************************************");
-            log("************************************ PUZZLE SOLVED  IN " + moveHistory.length + " MOVES!!!!!!!!!!!!!!!!! ***************************************");
-            log("********************************************* TIME ELAPSED: " + (Date.now() - startTime) + " MS ************************************************");
-            log("************************************************************************************************************************");
-            log("************************************************************************************************************************");
-            log("************************************************************************************************************************");
-            log(moveHistory);
-            log(tubes);
+            log("*******************************************************************************************************************");
+            log("*******************************************************************************************************************");
+            log("*******************************************************************************************************************");
+            log("****************************************** PUZZLE SOLVED  IN " + moveHistory.length + " MOVES! ********************************************");
+            log("****************************************** TIME ELAPSED: " + (Date.now() - startTime)/1000 + " seconds *****************************************");
+            log("*******************************************************************************************************************");
+            log("*******************************************************************************************************************");
+            log("*******************************************************************************************************************");
+            log([moveHistory]);
+            log([tubes]);
             return true;
         }
 // log(["EMPTY SLOTS", emptySlots]);
@@ -321,21 +161,19 @@ const solve = (tubes, moveHistory, depth) => {
         }
     }
     log(["AVAILABLE MOVES", availableMoves]);
-    log(["DEPTH", depth]);
+    // log(["DEPTH", depth]);
 
     if (!availableMoves.length) {
         log(['********************************************************* NO MOVES LEFT!!! **********************************************************', moveHistory]);
         const lastMove = moveHistory[moveHistory.length - 1];
-        if (lastMove.from === 10 && lastMove.to === 3) {
-            // throw new Error('!!!!!!!!!!!!!!!!!!!!!');
-        }
+        // log(["MOVES", moveHistory]);
+        // log(["LAST MOVE", lastMove]);
         return false;
     }
 
     for (let l = 0; l < availableMoves.length; l++) {
         const move = availableMoves[l];
-        // log(["MOVE", move]);
-        log(["TUBES BEFORE MOVE", tubes]);
+        // log(["TUBES BEFORE MOVE", tubes]);
         const tubesState = JSON.parse(JSON.stringify(tubes));
         doMove(move, tubesState, ballGroups, slots);
         // const ballgroupsState = JSON.parse(JSON.stringify(ballGroups));
@@ -361,7 +199,7 @@ const doMove = (move, tubes, ballGroups, slots) => {
     const sourceEnd = sourceStart - group.count;
     let targetIndex = targetSlot.count - 1;
     // log(["TARGET", targetSlot, targetIndex]);
-    log(["DO MOVE", {from:move.from+1, to:move.to+1}]);
+    log(["DO MOVE", move]);
     for (let i = sourceStart; i > sourceEnd; i--) {
         tubes[move.from][i] = null;
         tubes[move.to][targetIndex] = group.color;
@@ -370,7 +208,7 @@ const doMove = (move, tubes, ballGroups, slots) => {
     }
 };
 
-const ok = checkProblem();
+const ok = checkProblem(puzzle);
 if (ok) {
-    solve(tubesInitial, [], 0);
+    solve(puzzle, [], 0);
 }
